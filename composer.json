@@ -1,0 +1,21 @@
+{
+    "name": "fariddomat/auto-crud",
+    "description": "Auto Crud For laravel applications",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Fariddomat\\AutoCrud\\": "src/"
+        },
+        "files": [
+            "src/Helpers/ImageHelper.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Farid Domat",
+            "email": "fariddomat.000@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
