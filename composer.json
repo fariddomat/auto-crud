@@ -2,6 +2,7 @@
     "name": "fariddomat/auto-crud",
     "description": "Auto Crud For laravel applications",
     "type": "library",
+    "license": "MIT",
     "require": {
         "php": ">=8"
     },
