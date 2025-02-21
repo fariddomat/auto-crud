@@ -2,6 +2,9 @@
     "name": "fariddomat/auto-crud",
     "description": "Auto Crud For laravel applications",
     "type": "library",
+    "require": {
+        "php": ">=8"
+    },
     "autoload": {
         "psr-4": {
             "Fariddomat\\AutoCrud\\": "src/"
@@ -16,6 +19,5 @@
             "email": "fariddomat.000@gmail.com"
         }
     ],
-    "minimum-stability": "stable",
-    "require": {}
+    "minimum-stability": "stable"
 }
