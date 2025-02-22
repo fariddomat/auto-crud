@@ -162,8 +162,8 @@ EOT;
 
     private function generateBladeViews($name, $isDashboard)
     {
-        $folderName = Str::plural(Str::snake($name)); // Use plural for view folder name
-        $basePath = resource_path("views/" . ($isDashboard ? "dashboard/{$folderName}" : "{$folderName}"));
+        $folderName = $isDashboard ? 'dashboard.'.Str::plural(Str::snake($name)) : Str::plural(Str::snake($name)); // Use plural for view folder name
+        $basePath = resource_path("views/{$folderName}");
     
         if (!File::exists($basePath)) {
             File::makeDirectory($basePath, 0755, true, true);
