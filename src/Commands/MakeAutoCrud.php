@@ -161,48 +161,39 @@ EOT;
     }
 
     private function generateBladeViews($name, $isDashboard)
-{
-    $basePath = resource_path("views/" . ($isDashboard ? "dashboard/{$name}" : "{$name}"));
-
-    if (!File::exists($basePath)) {
-        File::makeDirectory($basePath, 0755, true, true);
+    {
+        $basePath = resource_path("views/" . ($isDashboard ? "dashboard/{$name}" : "{$name}"));
+    
+        if (!File::exists($basePath)) {
+            File::makeDirectory($basePath, 0755, true, true);
+        }
+    
+        // Modify the index view to use the data-table component
+        $indexView = <<<EOT
+    @extends('layouts.app')
+    
+    @section('content')
+        <div class="container">
+            <h1>قائمة {$name}</h1>
+            <a href="{{ route('{$name}.create') }}" class="btn btn-primary">إضافة جديد</a>
+    
+            {{-- Data Table Component --}}
+            <x-autocrud::data-table
+                :columns="['id', 'name']"
+                :data="\$records"
+                routePrefix="{$name}"
+                :show="true"
+                :edit="true"
+                :delete="true"
+            />
+        </div>
+    @endsection
+    EOT;
+    
+        File::put("$basePath/index.blade.php", $indexView);
+        $this->info("\033[32m Blade view created: {$basePath}/index.blade.php \033[0m");
     }
-
-    $indexView = <<<EOT
-@extends('layouts.app')
-
-@section('content')
-    <div class="container">
-        <h1>قائمة {$name}</h1>
-        <a href="{{ route('{$name}.create') }}" class="btn btn-primary">إضافة جديد</a>
-        <table class="table">
-            <tr>
-                <th>ID</th>
-                <th>الاسم</th>
-                <th>الإجراءات</th>
-            </tr>
-            @foreach (\$records as \$record)
-                <tr>
-                    <td>{{ \$record->id }}</td>
-                    <td>{{ \$record->name }}</td>
-                    <td>
-                        <a href="{{ route('{$name}.edit', \$record) }}" class="btn btn-warning">تعديل</a>
-                        <form action="{{ route('{$name}.destroy', \$record) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">حذف</button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </table>
-    </div>
-@endsection
-EOT;
-
-    File::put("$basePath/index.blade.php", $indexView);
-    $this->info("\033[32m Blade view created: {$basePath}/index.blade.php \033[0m");
-}
+    
 
     private function generateMigration($name, $tableName, $columns)
     {

@@ -18,7 +18,7 @@ class AutoCrudServiceProvider extends ServiceProvider
 
         // نشر الملفات
         $this->publishes([
-            __DIR__.'/resources/views' => resource_path('views/vendor/autocrud'),
+            __DIR__.'/resources/views' => resource_path('views/vendor/auto-crud'),
         ], 'autocrud-views');
     }
 
