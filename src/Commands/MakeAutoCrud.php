@@ -58,7 +58,7 @@ class MakeAutoCrud extends Command
         $namespace = $isDashboard ? 'App\Http\Controllers\Dashboard' : 'App\Http\Controllers';
         $controllerPath = app_path($isDashboard ? "Http/Controllers/Dashboard/{$name}Controller.php" : "Http/Controllers/{$name}Controller.php");
 
-        $routePrefix = $isDashboard ? 'dashboard'.Str::plural(Str::snake($name)): Str::plural(Str::snake($name)); // Pluralize route prefix
+        $routePrefix = $isDashboard ? 'dashboard.'.Str::plural(Str::snake($name)): Str::plural(Str::snake($name)); // Pluralize route prefix
 
         $controllerContent = <<<EOT
 <?php
