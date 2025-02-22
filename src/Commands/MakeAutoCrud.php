@@ -15,45 +15,43 @@ class MakeAutoCrud extends Command
     public function handle()
     {
         $name = Str::studly($this->argument('name'));
-        $tableName = Str::snake($name);
+        $tableName = Str::snake(Str::plural($name)); // Pluralize the table name
         $isApi = $this->option('api');
         $isDashboard = $this->option('dashboard');
         $fields = $this->argument('fields');
 
         $this->info("\033[34m Generating Auto CRUD for $name... \033[0m");
 
-        // تحليل الحقول المدخلة
+        // Analyze input fields
         $columns = [];
         foreach ($fields as $field) {
             [$columnName, $columnType] = explode(':', $field);
             $columns[$columnName] = $columnType;
         }
 
-        // إنشاء Model
+        // Create Model
         $this->call('make:model', ['name' => $name]);
 
-        // إنشاء Controller
+        // Create Controller
         $this->generateController($name, $isApi, $isDashboard);
 
-        // إنشاء Livewire Components فقط إذا لم يكن API
+        // Create Livewire Components only if not API
         if (!$isApi) {
             $prefix = $isDashboard ? 'dashboard.' : 'frontend.';
             $this->call('make:livewire', ['name' => "{$prefix}{$name}-index"]);
             $this->call('make:livewire', ['name' => "{$prefix}{$name}-form"]);
         }
 
-        // إنشاء Migration
+        // Create Migration
         $this->generateMigration($name, $tableName, $columns);
 
-        // إنشاء Views إذا كان Web
+        // Create Views if Web
         if (!$isApi) {
             $this->generateBladeViews($name, $isDashboard);
         }
 
         $this->info("\033[34m CRUD for $name has been created successfully! \033[0m");
     }
-
-    
 
     private function generateController($name, $isApi, $isDashboard)
     {
@@ -162,7 +160,8 @@ EOT;
 
     private function generateBladeViews($name, $isDashboard)
     {
-        $basePath = resource_path("views/" . ($isDashboard ? "dashboard/{$name}" : "{$name}"));
+        $folderName = Str::plural(Str::snake($name)); // Use plural for view folder name
+        $basePath = resource_path("views/" . ($isDashboard ? "dashboard/{$folderName}" : "{$folderName}"));
     
         if (!File::exists($basePath)) {
             File::makeDirectory($basePath, 0755, true, true);
@@ -170,25 +169,23 @@ EOT;
     
         // Modify the index view to use the data-table component
         $indexView = <<<EOT
-    @extends('layouts.app')
-    
-    @section('content')
+    <x-app-layout>
         <div class="container">
             <h1>قائمة {$name}</h1>
-            <a href="{{ route('{$name}.create') }}" class="btn btn-primary">إضافة جديد</a>
+            <a href="{{ route('{$folderName}.create') }}" class="btn btn-primary">إضافة جديد</a>
     
             {{-- Data Table Component --}}
             <x-autocrud::data-table
                 :columns="['id', 'name']"
                 :data="\$records"
-                routePrefix="{$name}"
+                routePrefix="{$folderName}"
                 :show="true"
                 :edit="true"
                 :delete="true"
             />
         </div>
-    @endsection
-    EOT;
+    </x-app-layout>
+EOT;
     
         File::put("$basePath/index.blade.php", $indexView);
         $this->info("\033[32m Blade view created: {$basePath}/index.blade.php \033[0m");
