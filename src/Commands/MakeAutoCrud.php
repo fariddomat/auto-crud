@@ -58,6 +58,8 @@ class MakeAutoCrud extends Command
         $namespace = $isDashboard ? 'App\Http\Controllers\Dashboard' : 'App\Http\Controllers';
         $controllerPath = app_path($isDashboard ? "Http/Controllers/Dashboard/{$name}Controller.php" : "Http/Controllers/{$name}Controller.php");
 
+        $routePrefix = Str::plural(Str::snake($name)); // Pluralize route prefix
+
         $controllerContent = <<<EOT
 <?php
 
@@ -117,37 +119,37 @@ EOT;
     public function index()
     {
         \$records = $name::all();
-        return view('{$name}.index', compact('records'));
+        return view('{$routePrefix}.index', compact('records'));
     }
 
     public function create()
     {
-        return view('{$name}.create');
+        return view('{$routePrefix}.create');
     }
 
     public function store(Request \$request)
     {
         \$validated = \$request->validate($name::rules());
         $name::create(\$validated);
-        return redirect()->route('{$name}.index')->with('success', 'تم الإضافة بنجاح');
+        return redirect()->route('{$routePrefix}.index')->with('success', 'تم الإضافة بنجاح');
     }
 
     public function edit($name \$record)
     {
-        return view('{$name}.edit', compact('record'));
+        return view('{$routePrefix}.edit', compact('record'));
     }
 
     public function update(Request \$request, $name \$record)
     {
         \$validated = \$request->validate($name::rules());
         \$record->update(\$validated);
-        return redirect()->route('{$name}.index')->with('success', 'تم التحديث بنجاح');
+        return redirect()->route('{$routePrefix}.index')->with('success', 'تم التحديث بنجاح');
     }
 
     public function destroy($name \$record)
     {
         \$record->delete();
-        return redirect()->route('{$name}.index')->with('success', 'تم الحذف بنجاح');
+        return redirect()->route('{$routePrefix}.index')->with('success', 'تم الحذف بنجاح');
     }
 EOT;
         }
