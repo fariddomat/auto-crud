@@ -53,6 +53,8 @@ class MakeAutoCrud extends Command
         $this->info("\033[34m CRUD for $name has been created successfully! \033[0m");
     }
 
+    
+
     private function generateController($name, $isApi, $isDashboard)
     {
         $namespace = $isDashboard ? 'App\Http\Controllers\Dashboard' : 'App\Http\Controllers';
