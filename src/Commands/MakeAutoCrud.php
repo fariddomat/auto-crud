@@ -163,7 +163,7 @@ EOT;
     private function generateBladeViews($name, $isDashboard)
     {
         $folderName = $isDashboard ? 'dashboard.'.Str::plural(Str::snake($name)) : Str::plural(Str::snake($name)); // Use plural for view folder name
-        $basePath = resource_path("views/{$folderName}");
+        $basePath = resource_path("views/" . ($isDashboard ? "dashboard/".Str::plural(Str::snake($name)) : Str::plural(Str::snake($name))));
     
         if (!File::exists($basePath)) {
             File::makeDirectory($basePath, 0755, true, true);
@@ -177,7 +177,7 @@ EOT;
             <a href="{{ route('{$folderName}.create') }}" class="btn btn-primary">إضافة جديد</a>
     
             {{-- Data Table Component --}}
-            <x-autocrud::data-table
+            <x-autocrud::table
                 :columns="['id', 'name']"
                 :data="\$records"
                 routePrefix="{$folderName}"
