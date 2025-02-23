@@ -62,11 +62,11 @@ php artisan make:auto-crud Product name:string price:decimal description:text ca
 This command will generate a Product model with a name field (string), a price field (decimal), a description field (text), and a category_id field (select).
 Features
 
-    Automatic CRUD Generation: Create models, controllers, migrations, views, and routes with a single command.
-    Customizable Fields: Specify fields with various data types, including string, decimal, text, and select.
-    Dashboard Support: Automatically generate routes prefixed with dashboard for admin panels.
-    API Support: Optionally generate routes for API endpoints.
-    Blade Views: Generate create, edit, and index Blade views for displaying and interacting with records.
+Automatic CRUD Generation: Create models, controllers, migrations, views, and routes with a single command.
+Customizable Fields: Specify fields with various data types, including string, decimal, text, and select.
+Dashboard Support: Automatically generate routes prefixed with dashboard for admin panels.
+API Support: Optionally generate routes for API endpoints.
+Blade Views: Generate create, edit, and index Blade views for displaying and interacting with records.
 
 Configuration
 
