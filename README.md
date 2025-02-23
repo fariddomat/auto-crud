@@ -8,11 +8,11 @@ You can install Auto-Crud via Composer by running the following command:
 
 ```bash
 composer require fariddomat/auto-crud:dev-main
-
+```
 Once installed, you need to publish the necessary views by running:
-
+```bash
 php artisan vendor:publish --provider="Fariddomat\AutoCrud\AutoCrudServiceProvider" --tag="autocrud-views"
-
+```
 This will publish the Blade views for CRUD operations (create, edit, index) into your resources/views directory.
 Usage
 Create a CRUD Module
@@ -21,9 +21,9 @@ You can generate a complete CRUD module using the make:auto-crud Artisan command
 Example 1: With Dashboard Prefix
 
 If you want to generate a CRUD module with the dashboard prefix, you can run:
-
+```bash
 php artisan make:auto-crud Farid customer_name:string total_price:decimal status:string --dashboard
-
+```
 This command will generate:
 
     Model: Farid
