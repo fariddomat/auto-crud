@@ -13,6 +13,7 @@ class MigrationGenerator
         $migrationContent = self::getTemplate($tableName, $columns);
         File::put($migrationFileName, $migrationContent);
         echo "\033[32m Migration created: {$migrationFileName} \033[0m\n";
+
     }
 
     private static function getTemplate($tableName, $columns)

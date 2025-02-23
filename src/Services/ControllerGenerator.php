@@ -111,5 +111,7 @@ EOT;
         $controllerContent .= "\n}\n";
 
         File::put($controllerPath, $controllerContent);
+
+       echo "\033[32m Controller created: {$controllerPath} \033[0m\n";
     }
 }

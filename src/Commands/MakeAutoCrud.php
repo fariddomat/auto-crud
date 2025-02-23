@@ -8,6 +8,7 @@ use Fariddomat\AutoCrud\Services\CrudGenerator;
 use Fariddomat\AutoCrud\Services\ControllerGenerator;
 use Fariddomat\AutoCrud\Services\ViewGenerator;
 use Fariddomat\AutoCrud\Services\MigrationGenerator;
+use Fariddomat\AutoCrud\Services\RouteGenerator; // Add this line for the RouteGenerator
 
 class MakeAutoCrud extends Command
 {
@@ -26,14 +27,19 @@ class MakeAutoCrud extends Command
 
         $this->info("\033[34m Generating Auto CRUD for $name... \033[0m");
 
-        // إنشاء الملفات المطلوبة
+        // Create the necessary files
         $this->call('make:model', ['name' => $name]);
         ControllerGenerator::generate($name, $isApi, $isDashboard);
         MigrationGenerator::generate($name, $crudGenerator->getTableName(), $parsedFields);
 
+        // Generate views (if not API)
         if (!$isApi) {
             ViewGenerator::generateBladeViews($name, $isDashboard, $parsedFields);
         }
+
+        // Automatically generate routes
+        $routeGenerator = new RouteGenerator();
+        $routeGenerator->create($name, $isApi ? $name.'ApiController' : $name.'Controller', $isApi ? 'api' : 'web', $isDashboard);
 
         $this->info("\033[34m CRUD for $name has been created successfully! \033[0m");
     }

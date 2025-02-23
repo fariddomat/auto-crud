@@ -42,6 +42,8 @@ class ViewGenerator
 EOT;
 
         File::put("$basePath/index.blade.php", $indexView);
+       echo "\033[32m Views created in: {$basePath} \033[0m\n";
+
     }
 
     public static function generateCreateBlade($folderName, $fields)
