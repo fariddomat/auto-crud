@@ -37,7 +37,7 @@ class CrudGenerator
             } elseif ($type == 'text') {
                 $rules[] = "'$name' => 'nullable|string',";
             } elseif ($type == 'select') {
-                $rules[] = "'$name' => 'required|exists:table_name,id',"; // Add dynamic table name if necessary
+                $rules[] = "'$name' => 'required|exists:" . Str::snake(Str::plural(Str::beforeLast($name, '_id'))) . ",id',";
             }
         }
 
@@ -76,6 +76,9 @@ class CrudGenerator
             $parts = explode(':', $field);
             $name = $parts[0];
             $type = $parts[1] ?? 'string';
+            if ($type =='select') {
+                $type="unsignedBigInteger";
+            }
             $parsed[] = ['name' => $name, 'type' => $type];
         }
         return $parsed;
