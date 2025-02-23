@@ -28,7 +28,11 @@ class MakeAutoCrud extends Command
         $this->info("\033[34m Generating Auto CRUD for $name... \033[0m");
 
         // Create the necessary files
-        $this->call('make:model', ['name' => $name]);
+        // $this->call('make:model', ['name' => $name]);
+
+        // Generate the model with validation rules
+        $crudGenerator->generateModel();
+
         ControllerGenerator::generate($name, $isApi, $isDashboard);
         MigrationGenerator::generate($name, $crudGenerator->getTableName(), $parsedFields);
 
@@ -39,7 +43,7 @@ class MakeAutoCrud extends Command
 
         // Automatically generate routes
         $routeGenerator = new RouteGenerator();
-        $routeGenerator->create($name, $isApi ? $name.'ApiController' : $name.'Controller', $isApi ? 'api' : 'web', $isDashboard);
+        $routeGenerator->create($name, $isApi ? $name . 'ApiController' : $name . 'Controller', $isApi ? 'api' : 'web', $isDashboard);
 
         $this->info("\033[34m CRUD for $name has been created successfully! \033[0m");
     }

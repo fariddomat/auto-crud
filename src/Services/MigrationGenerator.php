@@ -13,7 +13,6 @@ class MigrationGenerator
         $migrationContent = self::getTemplate($tableName, $columns);
         File::put($migrationFileName, $migrationContent);
         echo "\033[32m Migration created: {$migrationFileName} \033[0m\n";
-
     }
 
     private static function getTemplate($tableName, $columns)
@@ -25,22 +24,22 @@ class MigrationGenerator
 
         return "<?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+            use Illuminate\Database\Migrations\Migration;
+            use Illuminate\Database\Schema\Blueprint;
+            use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
-    public function up() {
-        Schema::create('$tableName', function (Blueprint \$table) {
-            \$table->id();
-            $fields
-            \$table->timestamps();
-        });
-    }
+            return new class extends Migration {
+                public function up() {
+                    Schema::create('$tableName', function (Blueprint \$table) {
+                        \$table->id();
+                        $fields
+                        \$table->timestamps();
+                    });
+                }
 
-    public function down() {
-        Schema::dropIfExists('$tableName');
-    }
-};";
+                public function down() {
+                    Schema::dropIfExists('$tableName');
+                }
+            };";
     }
 }
