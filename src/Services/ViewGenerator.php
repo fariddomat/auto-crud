@@ -69,7 +69,7 @@ class ViewGenerator
                     @lang('site.create') @lang('site.{$folderName}')
                 </h1>
 
-                <form action="{{ route('{$folderName}.store') }}" method="POST" class="bg-white p-6 rounded-lg shadow-md">
+                <form action="{{ route('{$folderName}.store') }}" method="POST" class="bg-white p-6 rounded-lg shadow-md" enctype="multipart/form-data">
                     @csrf
                     {$formFields}
                     <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-700">
@@ -92,7 +92,7 @@ class ViewGenerator
                     @lang('site.edit') @lang('site.{$folderName}')
                 </h1>
 
-                <form action="{{ route('{$folderName}.update', \$record->id) }}" method="POST" class="bg-white p-6 rounded-lg shadow-md">
+                <form action="{{ route('{$folderName}.update', \$record->id) }}" method="POST" class="bg-white p-6 rounded-lg shadow-md" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     {$formFields}
@@ -136,7 +136,7 @@ class ViewGenerator
                         <span class="text-red-500 text-sm">{{ \$message }}</span>
                     @enderror
                 </div>
-            EOT;
+                EOT;
             } elseif ($type == "text") {
                 $output .= <<<EOT
                 <div class="mb-4">
@@ -146,7 +146,7 @@ class ViewGenerator
                         <span class="text-red-500 text-sm">{{ \$message }}</span>
                     @enderror
                 </div>
-            EOT;
+                EOT;
             } elseif ($type == "select") {
                 $output .= <<<EOT
                 <div class="mb-4">
@@ -161,10 +161,69 @@ class ViewGenerator
                         <span class="text-red-500 text-sm">{{ \$message }}</span>
                     @enderror
                 </div>
-            EOT;
+                EOT;
+            } elseif ($type == "boolean") {
+                $checked = $isEdit ? "{{ \$record->$name ? 'checked' : '' }}" : "";
+                $output .= <<<EOT
+                <div class="mb-4">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="{$name}" value="1" class="mr-2" {$checked}>
+                        @lang('site.{$name}')
+                    </label>
+                    @error('{$name}')
+                        <span class="text-red-500 text-sm">{{ \$message }}</span>
+                    @enderror
+                </div>
+                EOT;
+            } elseif ($type == "file") {
+                $output .= <<<EOT
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">@lang('site.{$name}')</label>
+                    <input type="file" name="{$name}" class="w-full border border-gray-300 rounded p-2">
+                    @isset(\$record?->{$name})
+                        <p class="mt-2">
+                            <a href="{{ asset(\$record->{$name}) }}" target="_blank" class="text-blue-500">@lang('site.view_file')</a>
+                        </p>
+                    @endisset
+                    @error('{$name}')
+                        <span class="text-red-500 text-sm">{{ \$message }}</span>
+                    @enderror
+                </div>
+                EOT;
+            } elseif ($type == "image") {
+                $output .= <<<EOT
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">@lang('site.{$name}')</label>
+                    <input type="file" name="{$name}" accept="image/*" class="w-full border border-gray-300 rounded p-2">
+                    @isset(\$record?->{$name})
+                        <img src="{{ asset(\$record->{$name}) }}" alt="Image" class="mt-2 w-32 h-32 rounded">
+                    @endisset
+                    @error('{$name}')
+                        <span class="text-red-500 text-sm">{{ \$message }}</span>
+                    @enderror
+                </div>
+                EOT;
+            } elseif ($type == "images") {
+                $output .= <<<EOT
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">@lang('site.{$name}')</label>
+                    <input type="file" name="{$name}[]" accept="image/*" multiple class="w-full border border-gray-300 rounded p-2">
+                    @if(!empty(\$record?->{$name}))
+                        <div class="mt-2 flex flex-wrap">
+                            @foreach(json_decode(\$record->{$name}, true) ?? [] as \$image)
+                                <img src="{{ asset(\$image) }}" alt="Image" class="w-16 h-16 mr-2 rounded">
+                            @endforeach
+                        </div>
+                    @endif
+                    @error('{$name}')
+                        <span class="text-red-500 text-sm">{{ \$message }}</span>
+                    @enderror
+                </div>
+                EOT;
             }
         }
 
         return $output;
     }
+
 }

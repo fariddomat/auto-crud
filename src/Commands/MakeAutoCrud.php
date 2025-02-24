@@ -24,6 +24,7 @@ class MakeAutoCrud extends Command
 
         $crudGenerator = new CrudGenerator($name, $fields);
         $parsedFields = $crudGenerator->parseFields();
+        $viewParseFields = $crudGenerator->viewParseFields();
 
         $this->info("\033[34m Generating Auto CRUD for $name... \033[0m");
 
@@ -38,7 +39,7 @@ class MakeAutoCrud extends Command
 
         // Generate views (if not API)
         if (!$isApi) {
-            ViewGenerator::generateBladeViews($name, $isDashboard, $parsedFields);
+            ViewGenerator::generateBladeViews($name, $isDashboard, $viewParseFields);
         }
 
         // Automatically generate routes

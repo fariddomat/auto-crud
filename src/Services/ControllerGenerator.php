@@ -15,17 +15,19 @@ class ControllerGenerator
         $routePrefix = $isDashboard ? 'dashboard.' . Str::plural(Str::snake($name)) : Str::plural(Str::snake($name)); // Pluralize route prefix
 
         $controllerContent = <<<EOT
-            <?php
+<?php
 
-            namespace $namespace;
+namespace $namespace;
 
-            use App\Models\\$name;
-            use Illuminate\Http\Request;
-            use App\Http\Controllers\Controller;
+use App\Models\\$name;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Helpers\ImageHelper;
 
-            class {$name}Controller extends Controller
-            {
-            EOT;
+
+class {$name}Controller extends Controller
+{
+EOT;
 
         if ($isApi) {
             // API Methods
@@ -40,11 +42,25 @@ class ControllerGenerator
                 {
                     \$validated = \$request->validate($name::rules());
 
-                    \$record = $name::create(\$validated);
+                    if (\$request->hasFile('image')) {
+                        \$validated['image'] = ImageHelper::storeImageInPublicDirectory(\$request->file('image'), 'uploads/{$routePrefix}');
+                    }
 
+                    if (\$request->hasFile('file')) {
+                        \$validated['file'] = \$request->file('file')->store('uploads/{$routePrefix}', 'public');
+                    }
+
+                    if (\$request->hasFile('images')) {
+                        \$validated['images'] = [];
+                        foreach (\$request->file('images') as \$image) {
+                            \$validated['images'][] = ImageHelper::storeImageInPublicDirectory(\$image, 'uploads/{$routePrefix}');
+                        }
+                        \$validated['images'] = json_encode(\$validated['images']);
+                    }
+
+                    \$record = $name::create(\$validated);
                     return response()->json(\$record, 201);
                 }
-
                 public function show($name \$record)
                 {
                     return response()->json(\$record);
@@ -54,15 +70,45 @@ class ControllerGenerator
                 {
                     \$validated = \$request->validate($name::rules());
 
-                    \$record->update(\$validated);
+                    if (\$request->hasFile('image')) {
+                        ImageHelper::removeImageInPublicDirectory(\$record->image);
+                        \$validated['image'] = ImageHelper::storeImageInPublicDirectory(\$request->file('image'), 'uploads/{$routePrefix}');
+                    }
 
+                    if (\$request->hasFile('file')) {
+                        \$validated['file'] = \$request->file('file')->store('uploads/{$routePrefix}', 'public');
+                    }
+
+                    if (\$request->hasFile('images')) {
+                        if (\$record->images) {
+                            foreach (json_decode(\$record->images, true) as \$oldImage) {
+                                ImageHelper::removeImageInPublicDirectory(\$oldImage);
+                            }
+                        }
+                        \$validated['images'] = [];
+                        foreach (\$request->file('images') as \$image) {
+                            \$validated['images'][] = ImageHelper::storeImageInPublicDirectory(\$image, 'uploads/{$routePrefix}');
+                        }
+                        \$validated['images'] = json_encode(\$validated['images']);
+                    }
+
+                    \$record->update(\$validated);
                     return response()->json(\$record);
                 }
 
                 public function destroy($name \$record)
                 {
-                    \$record->delete();
+                    if (\$record->image) {
+                        ImageHelper::removeImageInPublicDirectory(\$record->image);
+                    }
 
+                    if (\$record->images) {
+                        foreach (json_decode(\$record->images, true) as \$image) {
+                            ImageHelper::removeImageInPublicDirectory(\$image);
+                        }
+                    }
+
+                    \$record->delete();
                     return response()->json(['message' => 'Deleted successfully']);
                 }
             EOT;
@@ -78,30 +124,85 @@ class ControllerGenerator
 
             public function create()
             {
+
                 return view('{$routePrefix}.create');
             }
 
-            public function store(Request \$request)
+             public function store(Request \$request)
             {
                 \$validated = \$request->validate($name::rules());
+
+                if (\$request->hasFile('image')) {
+                    \$validated['image'] = ImageHelper::storeImageInPublicDirectory(\$request->file('image'), 'uploads/{$routePrefix}');
+                }
+
+                if (\$request->hasFile('file')) {
+                    \$validated['file'] = \$request->file('file')->store('uploads/{$routePrefix}', 'public');
+                }
+
+                if (\$request->hasFile('images')) {
+                    \$validated['images'] = [];
+                    foreach (\$request->file('images') as \$image) {
+                        \$validated['images'][] = ImageHelper::storeImageInPublicDirectory(\$image, 'uploads/{$routePrefix}');
+                    }
+                    \$validated['images'] = json_encode(\$validated['images']);
+                }
+
                 $name::create(\$validated);
                 return redirect()->route('{$routePrefix}.index')->with('success', 'تم الإضافة بنجاح');
             }
 
-            public function edit($name \$record)
+            public function edit(\$record)
             {
+            \$record = $name::findOrFail(\$record);
                 return view('{$routePrefix}.edit', compact('record'));
             }
 
-            public function update(Request \$request, $name \$record)
+            public function update(Request \$request,\$record)
             {
+            \$record = $name::findOrFail(\$record);
+
                 \$validated = \$request->validate($name::rules());
+
+                if (\$request->hasFile('image')) {
+                    ImageHelper::removeImageInPublicDirectory(\$record->image);
+                    \$validated['image'] = ImageHelper::storeImageInPublicDirectory(\$request->file('image'), 'uploads/{$routePrefix}');
+                }
+
+                if (\$request->hasFile('file')) {
+                    \$validated['file'] = \$request->file('file')->store('uploads/{$routePrefix}', 'public');
+                }
+
+                if (\$request->hasFile('images')) {
+                    if (\$record->images) {
+                        foreach (json_decode(\$record->images, true) as \$oldImage) {
+                            ImageHelper::removeImageInPublicDirectory(\$oldImage);
+                        }
+                    }
+                    \$validated['images'] = [];
+                    foreach (\$request->file('images') as \$image) {
+                        \$validated['images'][] = ImageHelper::storeImageInPublicDirectory(\$image, 'uploads/{$routePrefix}');
+                    }
+                    \$validated['images'] = json_encode(\$validated['images']);
+                }
+
                 \$record->update(\$validated);
                 return redirect()->route('{$routePrefix}.index')->with('success', 'تم التحديث بنجاح');
             }
 
-            public function destroy($name \$record)
-            {
+            public function destroy(\$record)
+            {\$record = $name::findOrFail(\$record);
+
+                if (\$record->image) {
+                    ImageHelper::removeImageInPublicDirectory(\$record->image);
+                }
+
+                if (\$record->images) {
+                    foreach (json_decode(\$record->images, true) as \$image) {
+                        ImageHelper::removeImageInPublicDirectory(\$image);
+                    }
+                }
+
                 \$record->delete();
                 return redirect()->route('{$routePrefix}.index')->with('success', 'تم الحذف بنجاح');
             }

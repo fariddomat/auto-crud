@@ -30,14 +30,45 @@ class CrudGenerator
             $type = $parts[1] ?? 'string';
 
             // Generate validation rules based on field types
-            if ($type == 'string') {
-                $rules[] = "'$name' => 'required|string|max:255',";
-            } elseif ($type == 'decimal' || $type == 'integer') {
-                $rules[] = "'$name' => 'required|numeric',";
-            } elseif ($type == 'text') {
-                $rules[] = "'$name' => 'nullable|string',";
-            } elseif ($type == 'select') {
-                $rules[] = "'$name' => 'required|exists:" . Str::snake(Str::plural(Str::beforeLast($name, '_id'))) . ",id',";
+            switch ($type) {
+                case 'string':
+                    $rules[] = "'$name' => 'required|string|max:255',";
+                    break;
+
+                case 'decimal':
+                case 'integer':
+                    $rules[] = "'$name' => 'required|numeric',";
+                    break;
+
+                case 'text':
+                    $rules[] = "'$name' => 'nullable|string',";
+                    break;
+
+                case 'select':
+                    $tableName = Str::snake(Str::plural(Str::beforeLast($name, '_id')));
+                    $rules[] = "'$name' => 'required|exists:$tableName,id',";
+                    break;
+
+                case 'boolean':
+                    $rules[] = "'$name' => 'sometimes|boolean',";
+                    break;
+
+                case 'file':
+                    $rules[] = "'$name' => 'sometimes|file|max:2048',"; // Max size: 2MB
+                    break;
+
+                case 'image':
+                    $rules[] = "'$name' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',"; // Image validation
+                    break;
+
+                case 'images':
+                    $rules[] = "'$name' => 'sometimes|array',";
+                    $rules[] = "'$name.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',"; // Validate each image
+                    break;
+
+                default:
+                    $rules[] = "'$name' => 'required|string',"; // Default fallback
+                    break;
             }
         }
 
@@ -76,14 +107,28 @@ class CrudGenerator
             $parts = explode(':', $field);
             $name = $parts[0];
             $type = $parts[1] ?? 'string';
-            if ($type =='select') {
-                $type="unsignedBigInteger";
+            if ($type == 'select') {
+                $type = "unsignedBigInteger";
+            }
+            if ($type == 'file' || $type=="image"  || $type=="images") {
+                $type = "string";
             }
             $parsed[] = ['name' => $name, 'type' => $type];
         }
         return $parsed;
     }
 
+    public function viewParseFields()
+    {
+        $parsed = [];
+        foreach ($this->fields as $field) {
+            $parts = explode(':', $field);
+            $name = $parts[0];
+            $type = $parts[1] ?? 'string';
+            $parsed[] = ['name' => $name, 'type' => $type];
+        }
+        return $parsed;
+    }
     public function getTableName()
     {
         return Str::snake(Str::plural($this->name));
