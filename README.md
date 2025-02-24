@@ -1,7 +1,8 @@
 # Auto-Crud
 
 Auto-Crud is a Laravel package that automatically generates a complete CRUD (Create, Read, Update, Delete) functionality for your models. It simplifies and accelerates the process of creating CRUD modules, including controllers, views, migrations, and routes with optional API support. It also supports customizable fields, including various data types like strings, decimals, text, selects, booleans, and file uploads.
-Installation
+ 
+# Installation
 
 You can install Auto-Crud via Composer by running the following command:
 
@@ -48,19 +49,18 @@ This will generate:
 
 Fields
 
-<tabel>
-You can define various field types in the make:auto-crud command:
-Field Type	Description
-string	Simple text inputs
-decimal	Decimal numbers (e.g., prices)
-text	Longer text fields
-select	Dropdown fields with options (supports relations)
-boolean	Checkbox (true/false values)
-file	For single file uploads (PDF, docs, etc.)
-image	For single image uploads, processed using ImageHelper
-images	For multiple image uploads, processed using ImageHelper
-Example Usage
-</tabel>
+    You can define various field types in the make:auto-crud command:
+    Field Type	Description
+    string	Simple text inputs
+    decimal	Decimal numbers (e.g., prices)
+    text	Longer text fields
+    select	Dropdown fields with options (supports relations)
+    boolean	Checkbox (true/false values)
+    file	For single file uploads (PDF, docs, etc.)
+    image	For single image uploads, processed using ImageHelper
+    images	For multiple image uploads, processed using ImageHelper
+    Example Usage
+
 
     php artisan make:auto-crud Product name:string price:decimal description:text category_id:select is_featured:boolean thumbnail:image gallery:images manual:file
 
@@ -75,16 +75,17 @@ This command will generate a Product model with:
     gallery (multiple images upload)
     manual (file upload)
 
-Features
+# Features
 
-✔ Automatic CRUD Generation: Create models, controllers, migrations, views, and routes with a single command.
-✔ Customizable Fields: Supports multiple data types, including boolean and file uploads.
-✔ Dashboard Support: Generates routes prefixed with dashboard for admin panels.
-✔ API Support: Optionally generate routes for API endpoints.
-✔ Blade Views: Generate create, edit, and index views with automatic form fields.
-✔ Image & File Uploads: Supports single and multiple file/image uploads using ImageHelper.
-Image & File Handling
-Image Upload (Single Image)
+✔ Automatic CRUD Generation: Create models, controllers, migrations, views, and routes with a single command.<br>
+✔ Customizable Fields: Supports multiple data types, including boolean and file uploads.<br>
+✔ Dashboard Support: Generates routes prefixed with dashboard for admin panels.<br>
+✔ API Support: Optionally generate routes for API endpoints.<br>
+✔ Blade Views: Generate create, edit, and index views with automatic form fields.<br>
+✔ Image & File Uploads: Supports single and multiple file/image uploads using ImageHelper.<br>
+Image & File Handling<br>
+Image Upload (Single Image)<br>
+<br>
 
 For image fields, the generated controller will automatically use the ImageHelper to store and process images.
 
@@ -113,7 +114,7 @@ For file fields, files will be stored using Laravel's storage system.
     $product->manual = $filePath;
     $product->save();
 
-Configuration
+# Configuration
 
 You can further customize the generated code by modifying the controller, views, or migration files according to your project's needs.
 Contribution
