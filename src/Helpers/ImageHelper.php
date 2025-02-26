@@ -8,7 +8,7 @@ use Intervention\Image\Laravel\Facades\Image;
 
 class ImageHelper
 {
-    function storeImageInPublicDirectory($image, $directory, $width = null, $hight = null)
+    public static function storeImageInPublicDirectory($image, $directory, $width = null, $hight = null)
     {
         try{
         ini_set('memory_limit', '2048M'); // Adjust as needed
@@ -49,7 +49,7 @@ class ImageHelper
             dd($e);
         }
     }
-    function removeImageInPublicDirectory($image)
+    public static function removeImageInPublicDirectory($image)
     {
         try {
             Storage::disk('public')->delete($image);
