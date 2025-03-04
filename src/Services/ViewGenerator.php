@@ -32,7 +32,6 @@ class ViewGenerator
             self::generateEditBlade($folderName, $fields)
         );
 
-        // تعديل `index` ليستخدم `x-autocrud::table`
         $indexView = <<<EOT
         <x-app-layout>
             <div class="container mx-auto p-6">
@@ -148,13 +147,18 @@ class ViewGenerator
                 </div>
                 EOT;
             } elseif ($type == "select") {
+                $relatedModelVar = Str::plural(Str::camel(Str::beforeLast($name, '_id')));
+                // Compute the selected attribute outside the heredoc
+                $selected = $isEdit
+                    ? "{{ \$record->$name == \$option->id ? 'selected' : '' }}"
+                    : "{{ old('$name') == \$option->id ? 'selected' : '' }}";
                 $output .= <<<EOT
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700">@lang('site.{$name}')</label>
                     <select name="{$name}" class="w-full border border-gray-300 rounded p-2">
                         <option value="">@lang('site.select_{$name}')</option>
-                        @foreach (\$options as \$option)
-                            <option value="{{ \$option->id }}" {{ \$record->{$name} == \$option->id ? 'selected' : '' }}>{{ \$option->name }}</option>
+                        @foreach (\${$relatedModelVar} as \$option)
+                            <option value="{{ \$option->id }}" $selected>{{ \$option->name }}</option>
                         @endforeach
                     </select>
                     @error('{$name}')
@@ -225,5 +229,4 @@ class ViewGenerator
 
         return $output;
     }
-
 }
