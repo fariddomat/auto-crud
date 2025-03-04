@@ -2,9 +2,13 @@
 <p style="white-space: pre-wrap;" class="break-words">Auto-Crud is a Laravel package that automates the generation of complete CRUD (Create, Read, Update, Delete) functionality for your models. It streamlines development by creating models, controllers, migrations, views, and routes with a single interactive command. The package supports customizable fields (e.g., strings, decimals, selects, booleans, files, images), optional API controllers, dashboard prefixes, soft deletes, and middleware, all with a colorful command-line experience.</p>
 <hr>
 <h2>Installation</h2>
+```sh
     composer require fariddomat/auto-crud:dev-main
+    ```
 <p style="whi\\te-space: pre-wrap;" class="break-words">Publish the Blade views for CRUD operations:</p>
+```sh
     php artisan vendor:publish --provider="Fariddomat\AutoCrud\AutoCrudServiceProvider" --tag="autocrud-views"
+    ```
 <p style="white-space: pre-wrap;" class="break-words">This copies the customizable Blade views (<span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">create</span>, <span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">edit</span>, <span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">index</span>) to your <span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">resources/views/vendor/auto-crud</span> directory.</p>
 <hr>
 <h2>Usage</h2>
